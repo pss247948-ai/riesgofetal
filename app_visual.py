@@ -60,7 +60,7 @@ if st.button("🔍 Predecir Estado Fetal"):
         # =========================================
         # URL DE TU API EN RENDER
         # =========================================
-        API_URL = "https://riesgofetalapi.onrender.com/predecir"
+        API_URL = "https://apifetal.onrender.com/predecir"
 
         # Enviar datos
         response = requests.post(API_URL, json=payload)
