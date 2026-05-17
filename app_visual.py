@@ -1,133 +1,57 @@
 import streamlit as st
 import requests
 
-# =========================================
-# CONFIGURACIÓN DE LA PÁGINA
-# =========================================
-st.set_page_config(
-    page_title="Predicción Riesgo Fetal",
-    page_icon="👶",
-    layout="wide"
-)
+# Configuración de la página
+st.set_page_config(page_title="Predicción Riesgo Fetal", page_icon="👶")
 
-# =========================================
-# TÍTULO
-# =========================================
 st.title("👶 Sistema de Análisis de Cardiotocografía")
 st.markdown("""
-Ingrese los valores obtenidos del monitor fetal para predecir el estado de salud fetal.
+Ingrese los valores obtenidos del monitor fetal para predecir el estado de salud (NSP).
 """)
 
-# =========================================
-# FORMULARIO
-# =========================================
+# Crear dos columnas para que el formulario no sea tan largo
 col1, col2 = st.columns(2)
 
 with col1:
     lb = st.number_input("LB (Frecuencia Basal)", format="%.1f")
     ac = st.number_input("AC (Aceleraciones)", format="%.3f")
-    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f")
-    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f")
-    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f")
+    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)")
+    mstv = st.number_input("MSTV (Variabilidad Media)")
+    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)")
 
 with col2:
-    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f")
+    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)")
     dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f")
-    mean = st.number_input("Mean (Media)", format="%.2f")
-    median = st.number_input("Median (Mediana)", format="%.2f")
-    mode = st.number_input("Mode (Moda)", format="%.2f")
+    mean = st.number_input("Mean (Media)")
+    median = st.number_input("Median (Mediana)")
+    mode = st.number_input("Mode (Moda)")
 
-# =========================================
-# BOTÓN DE PREDICCIÓN
-# =========================================
+# Botón de predicción
 if st.button("🔍 Predecir Estado Fetal"):
-
-    # Datos enviados a la API
+    # Preparar los datos para la API
     payload = {
-        "AC": ac,
-        "LB": lb,
-        "ASTV": astv,
-        "MSTV": mstv,
-        "ALTV": altv,
-        "MLTV": mltv,
-        "DP": dp,
-        "Mean": mean,
-        "Median": median,
-        "Mode": mode
+        "AC": ac, "LB": lb, "ASTV": astv, "MSTV": mstv, "ALTV": altv,
+        "MLTV": mltv, "DP": dp, "Mean": mean, "Median": median, "Mode": mode
     }
-
+    
     try:
-        # =========================================
-        # URL DE TU API EN RENDER
-        # =========================================
-        API_URL = "https://riesgofetal.onrender.com/predecir"
+        # Llamada a tu API de FastAPI (asegúrate de que esté corriendo)
+        response = requests.post("https://riesgofetal.onrender.com/predecir", json=payload)
+        res = response.json()
+        
+        # Mostrar resultado con colores según el riesgo
+        st.subheader(f"Resultado: {res['estado']}")
+        confianza_str = str(res['confianza']).replace('%', '')
+        confianza_num = float(confianza_str)
 
-        # Enviar datos
-        response = requests.post(API_URL, json=payload)
-
-        # Verificar respuesta
-        if response.status_code == 200:
-
-            res = response.json()
-
-            st.divider()
-
-            # =========================================
-            # RESULTADO
-            # =========================================
-            st.subheader("📊 Resultado del Análisis")
-
-            estado = res["estado"]
-            nsp = res["NSP"]
-
-            confianza_str = str(res["confianza"]).replace("%", "")
-            confianza_num = float(confianza_str)
-
-            # =========================================
-            # MOSTRAR RESULTADO SEGÚN EL RIESGO
-            # =========================================
-            if nsp == 1:
-                st.success(
-                    f"""
-                    ✅ Estado Normal
-                    
-                    Confianza del modelo: {confianza_num:.2f}%
-                    """
-                )
-
-            elif nsp == 2:
-                st.warning(
-                    f"""
-                    ⚠️ Estado Sospechoso
-                    
-                    Confianza del modelo: {confianza_num:.2f}%
-                    """
-                )
-
-            else:
-                st.error(
-                    f"""
-                    🚨 Estado Patológico
-                    
-                    Confianza del modelo: {confianza_num:.2f}%
-                    """
-                )
-
-            # Mostrar datos extra
-            st.info(f"Clasificación obtenida: {estado}")
-
+        if res['NSP'] == 1:
+            st.success(f"Estado Normal (Confianza: {confianza_num:.2f}%)")
+        elif res['NSP'] == 2:
+            st.warning(f"Estado Sospechoso (Confianza: {confianza_num:.2f}%)")
         else:
-            st.error(
-                f"Error en la API: {response.status_code}"
-            )
-
+            st.error(f"Estado Patológico (Confianza: {confianza_num:.2f}%)")
+            
     except Exception as e:
-        st.error(
-            f"No se pudo conectar con la API.\n\nError: {e}"
-        )
+        st.error(f"No se pudo conectar con la API. ¿Está encendida? Error: {e}")
 
-# =========================================
-# FOOTER
-# =========================================
-st.markdown("---")
-st.caption("Sistema Inteligente de Predicción de Riesgo Fetal con FastAPI + Streamlit + XGBoost")
+#Lo ejecutas con: streamlit run app_visual.py
