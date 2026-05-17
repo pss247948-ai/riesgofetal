@@ -36,7 +36,7 @@ if st.button("🔍 Predecir Estado Fetal"):
     
     try:
         # Llamada a tu API de FastAPI (asegúrate de que esté corriendo)
-        response = requests.post("https://riesgofetal.onrender.com/predecir", json=payload)
+        response = requests.post("https://apifetal.onrender.com/", json=payload)
         res = response.json()
         
         # Mostrar resultado con colores según el riesgo
