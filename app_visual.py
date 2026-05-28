@@ -50,18 +50,18 @@ mensaje_ejemplo = st.empty()
 col1, col2 = st.columns(2)
 
 with col1:
-    lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None, step=0.0)
-    ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None, step=0.0)
-    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None, step=0.0)
-    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, step=0.0)
-    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None, step=0.0)
+    lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None, step=None)
+    ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None, step=None)
+    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None, step=None)
+    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, step=None)
+    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None, step=None)
 
 with col2:
-    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, step=0.0)
-    dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None, step=0.0)
-    mean = st.number_input("Mean (Media)", format="%.2f", value=None, step=0.0)
-    median = st.number_input("Median (Mediana)", format="%.2f", value=None, step=0.0)
-    mode = st.number_input("Mode (Moda)", format="%.2f", value=None, step=0.0)
+    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, step=None)
+    dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None, step=None)
+    mean = st.number_input("Mean (Media)", format="%.2f", value=None, step=None)
+    median = st.number_input("Median (Mediana)", format="%.2f", value=None, step=None)
+    mode = st.number_input("Mode (Moda)", format="%.2f", value=None, step=None)
 
 # Agrupamos todos los valores para evaluar si están vacíos
 valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
