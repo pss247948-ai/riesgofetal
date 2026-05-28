@@ -66,18 +66,18 @@ with st.container(border=True):
     col1, col2 = st.columns(2)
 
     with col1:
-        lb = st.number_input("LB (Frecuencia Basal)", format="%.2f", value=None, placeholder="120.00")
-        ac = st.number_input("AC (Aceleraciones)", format="%.8f", value=None, placeholder="0.00000000")
-        astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.2f", value=None, placeholder="73.00")
-        mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, placeholder="0.50")
-        altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.2f", value=None, placeholder="43.00")
+        lb = st.number_input("LB (Frecuencia Basal)", format="%.2f", value=None, placeholder="120.00",help="Frecuencia cardíaca fetal basal (latidos por minuto).")
+        ac = st.number_input("AC (Aceleraciones)", format="%.8f", value=None, placeholder="0.00000000",help="Número de aceleraciones por segundo. Indica un aumento temporal en la frecuencia cardíaca.")
+        astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.2f", value=None, placeholder="73.00", help="Porcentaje de tiempo con variabilidad anormal a corto plazo.")
+        mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, placeholder="0.50",  help="Valor medio de la variabilidad a corto plazo.")
+        altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.2f", value=None, placeholder="43.00", help="Porcentaje de tiempo con variabilidad anormal a largo plazo.")
 
     with col2:
-        mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, placeholder="2.40")
-        dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.8f", value=None, placeholder="0.00000000")
-        mean = st.number_input("Mean (Media)", format="%.2f", value=None, placeholder="137.00")
-        median = st.number_input("Median (Mediana)", format="%.2f", value=None, placeholder="121.00")
-        mode = st.number_input("Mode (Moda)", format="%.2f", value=None, placeholder="120.00")
+        mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, placeholder="2.40", help="Valor medio de la variabilidad a largo plazo.")
+        dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.8f", value=None, placeholder="0.00000000", help="Número de desaceleraciones prolongadas por segundo. Valores altos pueden indicar estrés o sufrimiento fetal.")
+        mean = st.number_input("Mean (Media)", format="%.2f", value=None, placeholder="137.00", help="Media del histograma de la frecuencia cardíaca fetal.")
+        median = st.number_input("Median (Mediana)", format="%.2f", value=None, placeholder="121.00", help="Mediana del histograma de la frecuencia cardíaca fetal.")
+        mode = st.number_input("Mode (Moda)", format="%.2f", value=None, placeholder="120.00", help="Moda del histograma de la frecuencia cardíaca fetal (el valor más frecuente).")
 
 # Agrupamos todos los valores para evaluar si están vacíos
 valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
