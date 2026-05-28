@@ -13,18 +13,14 @@ st.set_page_config(
 # =========================================
 # OCULTAR BOTONES DE NUMBER_INPUT (CSS)
 # =========================================
+# Este CSS ataca directamente a los botones personalizados que crea Streamlit
 ocultar_botones_css = """
 <style>
-/* Ocultar botones en Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+[data-testid="stNumberInputStepDown"] {
+    display: none !important;
 }
-
-/* Ocultar botones en Firefox */
-input[type=number] {
-    -moz-appearance: textfield;
+[data-testid="stNumberInputStepUp"] {
+    display: none !important;
 }
 </style>
 """
@@ -50,18 +46,18 @@ mensaje_ejemplo = st.empty()
 col1, col2 = st.columns(2)
 
 with col1:
-    lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None, step=None)
-    ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None, step=None)
-    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None, step=None)
-    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, step=None)
-    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None, step=None)
+    lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None)
+    ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None)
+    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None)
+    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None)
+    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None)
 
 with col2:
-    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, step=None)
-    dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None, step=None)
-    mean = st.number_input("Mean (Media)", format="%.2f", value=None, step=None)
-    median = st.number_input("Median (Mediana)", format="%.2f", value=None, step=None)
-    mode = st.number_input("Mode (Moda)", format="%.2f", value=None, step=None)
+    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None)
+    dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None)
+    mean = st.number_input("Mean (Media)", format="%.2f", value=None)
+    median = st.number_input("Median (Mediana)", format="%.2f", value=None)
+    mode = st.number_input("Mode (Moda)", format="%.2f", value=None)
 
 # Agrupamos todos los valores para evaluar si están vacíos
 valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
