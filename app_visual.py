@@ -11,6 +11,26 @@ st.set_page_config(
 )
 
 # =========================================
+# OCULTAR BOTONES DE NUMBER_INPUT (CSS)
+# =========================================
+ocultar_botones_css = """
+<style>
+/* Ocultar botones en Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Ocultar botones en Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
+"""
+st.markdown(ocultar_botones_css, unsafe_allow_html=True)
+
+# =========================================
 # TÍTULO
 # =========================================
 st.title("👶 Sistema de Análisis de Cardiotocografía")
@@ -27,7 +47,6 @@ mensaje_ejemplo = st.empty()
 # =========================================
 # FORMULARIO
 # =========================================
-# Agregamos value=None para que inicien vacíos y step=0.0 para quitar los botones de +/-
 col1, col2 = st.columns(2)
 
 with col1:
