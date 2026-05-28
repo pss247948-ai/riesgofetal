@@ -66,18 +66,18 @@ with st.container(border=True):
     col1, col2 = st.columns(2)
 
     with col1:
-        lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None, placeholder="120")
-        ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None, placeholder="0")
-        astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None, placeholder="73")
-        mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, placeholder="0.5")
-        altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None, placeholder="43")
+        lb = st.number_input("LB (Frecuencia Basal)", format="%.2f", value=None, placeholder="120.00")
+        ac = st.number_input("AC (Aceleraciones)", format="%.8f", value=None, placeholder="0.00000000")
+        astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.2f", value=None, placeholder="73.00")
+        mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, placeholder="0.50")
+        altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.2f", value=None, placeholder="43.00")
 
     with col2:
-        mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, placeholder="2.4")
-        dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None, placeholder="0")
-        mean = st.number_input("Mean (Media)", format="%.2f", value=None, placeholder="137")
-        median = st.number_input("Median (Mediana)", format="%.2f", value=None, placeholder="121")
-        mode = st.number_input("Mode (Moda)", format="%.2f", value=None, placeholder="120")
+        mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, placeholder="2.40")
+        dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.8f", value=None, placeholder="0.00000000")
+        mean = st.number_input("Mean (Media)", format="%.2f", value=None, placeholder="137.00")
+        median = st.number_input("Median (Mediana)", format="%.2f", value=None, placeholder="121.00")
+        mode = st.number_input("Mode (Moda)", format="%.2f", value=None, placeholder="120.00")
 
 # Agrupamos todos los valores para evaluar si están vacíos
 valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
@@ -85,7 +85,7 @@ valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
 # Si todos los campos están vacíos, mostramos mensaje
 if all(v is None for v in valores_inputs):
     mensaje_ejemplo.info(
-        "💡 **Guía:** Los campos muestran valores de referencia en texto transparente. Digite los datos reales para comenzar la evaluación."
+        "💡 **Guía:** Los campos muestran valores de referencia. Digite los datos reales para comenzar la evaluación."
     )
 
 st.write("") # Espacio en blanco para respirar
