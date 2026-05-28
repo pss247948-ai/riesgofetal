@@ -13,7 +13,6 @@ st.set_page_config(
 # =========================================
 # OCULTAR BOTONES DE NUMBER_INPUT (CSS)
 # =========================================
-# Este CSS ataca directamente a los botones personalizados que crea Streamlit
 ocultar_botones_css = """
 <style>
 [data-testid="stNumberInputStepDown"] {
@@ -37,7 +36,6 @@ Ingrese los valores obtenidos del monitor fetal para predecir el estado de salud
 # =========================================
 # CONTENEDOR PARA EL MENSAJE DE EJEMPLO
 # =========================================
-# Usamos st.empty() para reservar el espacio encima de los inputs
 mensaje_ejemplo = st.empty()
 
 # =========================================
@@ -45,28 +43,23 @@ mensaje_ejemplo = st.empty()
 # =========================================
 col1, col2 = st.columns(2)
 
+# Agregamos el atributo 'placeholder' a cada campo con sus respectivos valores
 with col1:
-    lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None)
-    ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None)
-    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None)
-    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None)
-    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None)
+    lb = st.number_input("LB (Frecuencia Basal)", format="%.1f", value=None, placeholder="120")
+    ac = st.number_input("AC (Aceleraciones)", format="%.3f", value=None, placeholder="0")
+    astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.1f", value=None, placeholder="73")
+    mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, placeholder="0.5")
+    altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.1f", value=None, placeholder="43")
 
 with col2:
-    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None)
-    dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None)
-    mean = st.number_input("Mean (Media)", format="%.2f", value=None)
-    median = st.number_input("Median (Mediana)", format="%.2f", value=None)
-    mode = st.number_input("Mode (Moda)", format="%.2f", value=None)
+    mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, placeholder="2.4")
+    dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.3f", value=None, placeholder="0")
+    mean = st.number_input("Mean (Media)", format="%.2f", value=None, placeholder="137")
+    median = st.number_input("Median (Mediana)", format="%.2f", value=None, placeholder="121")
+    mode = st.number_input("Mode (Moda)", format="%.2f", value=None, placeholder="120")
 
 # Agrupamos todos los valores para evaluar si están vacíos
 valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
-
-# Si absolutamente todos los campos están vacíos (None), mostramos el ejemplo arriba
-if all(v is None for v in valores_inputs):
-    mensaje_ejemplo.info(
-        "💡 **Ejemplo de datos:** LB=120 | AC=0 | ASTV=73 | MSTV=0.5 | ALTV=43 | MLTV=2.4 | DP=0 | Mean=137 | Median=121 | Mode=120"
-    )
 
 # =========================================
 # BOTÓN DE PREDICCIÓN
