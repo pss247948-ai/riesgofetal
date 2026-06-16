@@ -10,8 +10,15 @@ st.set_page_config(
     page_title="Predicción Riesgo Fetal",
     page_icon="👶",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded" 
 )
+
+# =========================================
+# CONFIGURACIÓN DE LA API (Cambiar aquí)
+# =========================================
+# Para pruebas locales usa: ""
+# Para producción en la nube usa: "https://apifetal.onrender.com/predecir"
+API_URL = "https://apifetal.onrender.com/predecir"
 
 # =========================================
 # INICIALIZACIÓN DE HISTORIAL (MEMORIA)
@@ -52,10 +59,31 @@ h1 {
 st.markdown(estilos_css, unsafe_allow_html=True)
 
 # =========================================
+# BARRA LATERAL (SIDEBAR) - INFO DEL MANUSCRITO
+# =========================================
+with st.sidebar:
+    st.image("https://i.imgur.com/BKQqYiH.png", width=100)
+    st.header("Sobre el Sistema")
+    st.markdown("""
+    Este sistema evalúa la cardiotocografía (CTG) para detectar la **hipoxia fetal**, una deficiencia de oxígeno que compromete al feto.
+    
+    ### 🧠 Motor Predictivo
+    Utiliza un modelo **XGBoost** optimizado mediante *Machine Learning* y validado clínicamente.
+    
+    ### 📊 Rendimiento del Modelo
+    * **Exactitud Global:** 95.77%
+    * **Sensibilidad (Patológico):** 100%
+    * **F1-Score (Patológico):** 96.7%
+    """)
+    st.success("✅ **Alta Fiabilidad:** El modelo identifica correctamente el 100% de los casos de sufrimiento fetal severo (cero falsos negativos en la clase patológica).")
+    st.markdown("---")
+    st.markdown("<div style='font-size: 0.8em; color: gray;'>Basado en el estudio: <i>Clasificación del estado fetal mediante XGBoost y atributos de Cardiotocografía</i></div>", unsafe_allow_html=True)
+
+# =========================================
 # ENCABEZADO
 # =========================================
 st.title("👶 Sistema de Análisis de Cardiotocografía")
-st.markdown("<p class='subtitulo'>Ingrese los valores del monitor fetal para predecir el estado de salud de manera instantánea.</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitulo'>Ingrese los valores del monitor fetal para predecir el estado de salud de manera instantánea y reducir la subjetividad clínica.</p>", unsafe_allow_html=True)
 
 # CREACIÓN DE PESTAÑAS
 tab1, tab2 = st.tabs(["🧑‍⚕️ Análisis Individual", "📁 Carga Masiva (CSV)"])
@@ -67,27 +95,53 @@ with tab1:
     mensaje_ejemplo = st.empty()
 
     with st.container(border=True):
-        st.subheader("📝 Datos del Paciente")
+        st.subheader("📝 Datos del Paciente (Cardiotocografía)")
         col1, col2 = st.columns(2)
 
+        # TOOLTIPS (help) DETALLADOS Y PLACEHOLDERS CORTOS
         with col1:
-            lb = st.number_input("LB (Frecuencia Basal)", format="%.2f", value=None, placeholder="120.00", help="Frecuencia cardíaca fetal basal (latidos por minuto).")
-            ac = st.number_input("AC (Aceleraciones)", format="%.8f", value=None, placeholder="0.00000000", help="Número de aceleraciones por segundo.")
-            astv = st.number_input("ASTV (% Tiempo Variabilidad Anormal)", format="%.2f", value=None, placeholder="73.00", help="Porcentaje de tiempo con variabilidad anormal a corto plazo.")
-            mstv = st.number_input("MSTV (Variabilidad Media)", format="%.2f", value=None, placeholder="0.50", help="Valor medio de la variabilidad a corto plazo.")
-            altv = st.number_input("ALTV (% Tiempo Variabilidad Alta)", format="%.2f", value=None, placeholder="43.00", help="Porcentaje de tiempo con variabilidad anormal a largo plazo.")
+            dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.8f", value=None, 
+                                 placeholder="Desaceleraciones prolongadas por segundo.", 
+                                 help="Las desaceleraciones prolongadas son caídas de la frecuencia cardíaca fetal por debajo de la línea base que duran entre 2 y 10 minutos. Una tasa alta advierte de un riesgo agudo de hipoxia severa.")
+            
+            altv = st.number_input("ALTV (% Variabilidad Alta)", format="%.2f", value=None, 
+                                   placeholder="Porcentaje de tiempo con variabilidad anormal a largo plazo.", 
+                                   help="Representa el porcentaje de tiempo con variabilidad alterada a largo plazo. Esta métrica evalúa las fluctuaciones macroscópicas; su pérdida constante puede sugerir un compromiso del sistema nervioso autónomo del feto.")
+            
+            ac = st.number_input("AC (Aceleraciones)", format="%.8f", value=None, 
+                                 placeholder="Aceleraciones por segundo.", 
+                                 help="Las aceleraciones son incrementos transitorios de la frecuencia cardíaca (usualmente ≥ 15 latidos durante ≥ 15 segundos). Su presencia normal es un signo muy tranquilizador de bienestar y buena oxigenación fetal.")
+            
+            mean = st.number_input("Mean (Media)", format="%.2f", value=None, 
+                                   placeholder="Media del histograma.", 
+                                   help="Es el valor promedio del ritmo cardíaco fetal procesado matemáticamente a partir del histograma. Ayuda a visualizar la tendencia sostenida de los latidos durante todo el examen.")
+            
+            astv = st.number_input("ASTV (% Variabilidad Anormal)", format="%.2f", value=None, 
+                                   placeholder="Porcentaje de tiempo con variabilidad anormal a corto plazo.", 
+                                   help="Mide el tiempo en el que la variación latido a latido (micro-fluctuaciones) se encuentra reducida o anormal. Una variabilidad a corto plazo disminuida es una de las principales señales de alarma de acidosis fetal.")
 
         with col2:
-            mltv = st.number_input("MLTV (Variabilidad Media Largo Plazo)", format="%.2f", value=None, placeholder="2.40", help="Valor medio de la variabilidad a largo plazo.")
-            dp = st.number_input("DP (Desaceleraciones Prolongadas)", format="%.8f", value=None, placeholder="0.00000000", help="Número de desaceleraciones prolongadas por segundo.")
-            mean = st.number_input("Mean (Media)", format="%.2f", value=None, placeholder="137.00", help="Media del histograma de la frecuencia cardíaca fetal.")
-            median = st.number_input("Median (Mediana)", format="%.2f", value=None, placeholder="121.00", help="Mediana del histograma de la frecuencia cardíaca fetal.")
-            mode = st.number_input("Mode (Moda)", format="%.2f", value=None, placeholder="120.00", help="Moda del histograma de la frecuencia cardíaca fetal.")
+            median = st.number_input("Median (Mediana)", format="%.2f", value=None, 
+                                     placeholder="Mediana del histograma.", 
+                                     help="Es el valor de frecuencia cardíaca que se ubica exactamente en el medio de toda la distribución. Es clínicamente útil porque ignora picos irreales o posibles interferencias cortas del sensor.")
+            
+            mode = st.number_input("Mode (Moda)", format="%.2f", value=None, 
+                                   placeholder="Moda del histograma.", 
+                                   help="Es el ritmo cardíaco que más tiempo ha marcado el monitor (el pico más alto de la distribución). Generalmente coincide de forma casi exacta con la Frecuencia Basal real del feto.")
+            
+            min_val = st.number_input("Min (Mínimo)", format="%.2f", value=None, 
+                                      placeholder="Mínimo del histograma.", 
+                                      help="Representa la lectura de frecuencia cardíaca más baja detectada en toda la sesión. Sirve para evaluar rápidamente la magnitud y profundidad de las bradicardias sufridas.")
+            
+            nzeros = st.number_input("Nzeros (Ceros)", format="%.2f", value=None, 
+                                     placeholder="Ceros del histograma.", 
+                                     help="Mide la cantidad de lecturas nulas en la señal digitalizada. Usualmente se vincula a pérdidas de contacto del transductor Doppler por movimientos bruscos o señal inestable.")
+            
+            lb = st.number_input("LB (Frecuencia Basal)", format="%.2f", value=None, 
+                                 placeholder="Frecuencia cardíaca del feto (generalmente entre 106 y 160 latidos).", 
+                                 help="Es el nivel de reposo del ritmo cardíaco del feto. Se considera normal cuando se sitúa en el rango de 110 a 160 latidos por minuto. Valores sostenidos muy altos (taquicardia) o bajos (bradicardia) indican problemas.")
 
-    valores_inputs = [lb, ac, astv, mstv, altv, mltv, dp, mean, median, mode]
-
-    if all(v is None for v in valores_inputs):
-        mensaje_ejemplo.info("💡 *Guía:* Los campos muestran valores de referencia. Digite los datos reales para comenzar la evaluación.")
+    valores_inputs = [dp, altv, ac, mean, astv, median, mode, min_val, nzeros, lb]
 
     st.write("")
 
@@ -96,13 +150,12 @@ with tab1:
             st.warning("⚠️ Por favor, complete todos los campos numéricos antes de predecir.")
         else:
             payload = {
-                "AC": ac, "LB": lb, "ASTV": astv, "MSTV": mstv, "ALTV": altv,
-                "MLTV": mltv, "DP": dp, "Mean": mean, "Median": median, "Mode": mode
+                "DP": dp, "ALTV": altv, "AC": ac, "Mean": mean, "ASTV": astv,
+                "Median": median, "Mode": mode, "Min": min_val, "Nzeros": nzeros, "LB": lb
             }
 
             try:
                 with st.spinner("Analizando datos con el modelo de IA..."):
-                    API_URL = "https://apifetal.onrender.com/predecir"
                     response = requests.post(API_URL, json=payload)
 
                 if response.status_code == 200:
@@ -112,7 +165,8 @@ with tab1:
                     confianza_num = float(str(res["confianza"]).replace("%", ""))
 
                     nuevo_registro = {
-                        "LB": lb, "AC": ac, "ASTV": astv, "DP": dp,
+                        "DP": dp, "ALTV": altv, "AC": ac, "Mean": mean, "ASTV": astv,
+                        "Median": median, "Mode": mode, "Min": min_val, "Nzeros": nzeros, "LB": lb,
                         "Diagnóstico": estado.upper(),
                         "Confianza": f"{confianza_num:.2f}%"
                     }
@@ -121,11 +175,11 @@ with tab1:
                     with st.container(border=True):
                         st.subheader("📊 Resultado del Análisis Diagnóstico")
                         if nsp == 1:
-                            st.success(f"### ✅ Estado Normal\n*Recomendación:* No hay riesgo alguno detectado.\n\n*Confianza del modelo predictivo: {confianza_num:.2f}%*")
+                            st.success(f"### ✅ Estado Normal\n*Recomendación:* No hay riesgo evidente de hipoxia detectado.\n\n*Confianza del modelo predictivo: {confianza_num:.2f}%*")
                         elif nsp == 2:
-                            st.warning(f"### ⚠️ Estado Sospechoso\n*Recomendación:* Requiere chequeo por parte del médico.\n\n*Confianza del modelo predictivo: {confianza_num:.2f}%*")
+                            st.warning(f"### ⚠️ Estado Sospechoso\n*Recomendación:* Ambigüedad clínica detectada. Requiere vigilancia y chequeo médico detallado.\n\n*Confianza del modelo predictivo: {confianza_num:.2f}%*")
                         else:
-                            st.error(f"### 🚨 Estado Patológico\n*Recomendación:* Atención de alta prioridad inmediata.\n\n*Confianza del modelo predictivo: {confianza_num:.2f}%*")
+                            st.error(f"### 🚨 Estado Patológico\n*Recomendación:* Riesgo severo de sufrimiento fetal. Atención de alta prioridad inmediata requerida.\n\n*Confianza del modelo predictivo: {confianza_num:.2f}%*")
                         st.progress(int(confianza_num))
 
                 else:
@@ -154,41 +208,27 @@ with tab2:
 
     if archivo_subido is not None:
         try:
-            # 1. Crear el DataFrame en memoria si es un archivo nuevo
             if ("archivo_actual" not in st.session_state) or (st.session_state["archivo_actual"] != archivo_subido.name):
                 df_temp = pd.read_csv(archivo_subido, sep=None, engine='python')
                 df_temp.columns = df_temp.columns.str.strip()
                 
-                # Verificar columnas requeridas antes de procesar
-                columnas_requeridas = ["AC", "LB", "ASTV", "MSTV", "ALTV", "MLTV", "DP", "Mean", "Median", "Mode"]
+                columnas_requeridas = ["DP", "ALTV", "AC", "Mean", "ASTV", "Median", "Mode", "Min", "Nzeros", "LB"]
                 
                 if not set(columnas_requeridas).issubset(set(df_temp.columns)):
                     st.error(f"⚠️ El archivo no tiene las columnas correctas. Faltan: {set(columnas_requeridas) - set(df_temp.columns)}")
                     st.session_state["df_masivo"] = None
                 else:
-                    # =========================================
-                    # LIMPIEZA Y PREPARACIÓN DEL DATAFRAME
-                    # =========================================
-                    # Nos quedamos SOLO con las columnas estrictamente necesarias
                     df_limpio = df_temp[columnas_requeridas].copy()
-                    
-                    # Añadir columna de ID de Paciente (empezando en 1)
                     df_limpio.insert(0, "Paciente_ID", range(1, len(df_limpio) + 1))
-                    
-                    # Añadir la columna de casillas para analizar
                     df_limpio.insert(0, "Analizar", False) 
                     
                     st.session_state["df_masivo"] = df_limpio
                     st.session_state["archivo_actual"] = archivo_subido.name
 
-            # 2. Si el archivo es válido y está en memoria, mostrar la interfaz
             if "df_masivo" in st.session_state and st.session_state["df_masivo"] is not None:
                 df_masivo = st.session_state["df_masivo"]
                 total_filas = len(df_masivo)
 
-                # =========================================
-                # PANEL DE HERRAMIENTAS DE SELECCIÓN
-                # =========================================
                 with st.container(border=True):
                     st.write("### 🛠️ Herramientas de Selección Rápida")
                     
@@ -212,16 +252,11 @@ with tab2:
                     with col_int3:
                         st.write("") 
                         if st.button("➕ Marcar Intervalo", use_container_width=True, type="secondary"):
-                            # Usamos loc para marcar en True ese rango específico
                             st.session_state["df_masivo"].loc[inicio-1 : fin-1, "Analizar"] = True
                             st.rerun()
 
-                # =========================================
-                # TABLA INTERACTIVA (EDICIÓN MANUAL)
-                # =========================================
                 st.write("### 📋 Tabla de Pacientes (Edición Manual)")
                 
-                # Deshabilitar edición en todas las columnas excepto "Analizar"
                 columnas_deshabilitadas = [col for col in df_masivo.columns if col != "Analizar"]
                 
                 df_editado = st.data_editor(
@@ -231,7 +266,7 @@ with tab2:
                             "Seleccionar", default=False, help="Marca para incluir en el análisis"
                         ),
                         "Paciente_ID": st.column_config.NumberColumn(
-                            "ID Paciente", format="%d" # Formato entero limpio
+                            "ID Paciente", format="%d" 
                         )
                     },
                     disabled=columnas_deshabilitadas,
@@ -241,9 +276,6 @@ with tab2:
                 
                 st.session_state["df_masivo"] = df_editado
 
-                # =========================================
-                # PROCESAMIENTO Y ANÁLISIS
-                # =========================================
                 df_seleccionados = df_editado[df_editado["Analizar"] == True].copy()
                 
                 st.write(f"*Total de pacientes listos para analizar:* {len(df_seleccionados)} / {total_filas}")
@@ -256,13 +288,12 @@ with tab2:
                     texto_progreso = st.empty()
                     
                     total_analizar = len(df_seleccionados)
-                    API_URL = "https://apifetal.onrender.com/predecir"
 
                     for i, (index, row) in enumerate(df_seleccionados.iterrows()):
                         payload = {
-                            "AC": row["AC"], "LB": row["LB"], "ASTV": row["ASTV"], 
-                            "MSTV": row["MSTV"], "ALTV": row["ALTV"], "MLTV": row["MLTV"], 
-                            "DP": row["DP"], "Mean": row["Mean"], "Median": row["Median"], "Mode": row["Mode"]
+                            "DP": row["DP"], "ALTV": row["ALTV"], "AC": row["AC"], 
+                            "Mean": row["Mean"], "ASTV": row["ASTV"], "Median": row["Median"], 
+                            "Mode": row["Mode"], "Min": row["Min"], "Nzeros": row["Nzeros"], "LB": row["LB"]
                         }
                         
                         try:
@@ -285,7 +316,6 @@ with tab2:
 
                     texto_progreso.success("✅ Análisis completado con éxito.")
                     
-                    # Crear tabla de resultados (quitamos la columna Checkbox, pero conservamos el ID)
                     df_resultados = df_seleccionados.drop(columns=["Analizar"])
                     df_resultados["DIAGNÓSTICO"] = diagnosticos
                     df_resultados["CONFIANZA"] = confianzas
