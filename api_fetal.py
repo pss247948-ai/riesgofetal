@@ -13,16 +13,16 @@ app = FastAPI(
 
 # 2. Modelo de datos con tus 10 variables exactas
 class FetalData(BaseModel):
-    AC: float
-    LB: float
-    ASTV: float
-    MSTV: float
-    ALTV: float
-    MLTV: float
     DP: float
+    ALTV: float
+    AC: float
     Mean: float
+    ASTV: float
     Median: float
     Mode: float
+    Min: float
+    Nzeros: float
+    LB: float
 
 # 3. Carga del Modelo (Sin escalador, según tu entrenamiento)
 try:
